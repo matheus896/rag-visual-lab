@@ -43,6 +43,7 @@ A aplicação é construída como um aplicativo web monolítico renderizado no l
     *   **Google Gemini:** Utilizado como o modelo de linguagem principal para geração de respostas.
     *   **CrewAI:** Framework de agentes usado no módulo "RAG Agente" para orquestrar o roteamento inteligente de perguntas.
 *   **Vector Store:** **ChromaDB** para armazenar os embeddings dos documentos e realizar buscas por similaridade.
+*   **Memória Persistente:** **Redis** (gerenciado via Docker) para o histórico de conversas.
 *   **Visualização de Dados:**
     *   **Plotly:** Para visualizações interativas, como o mapa de embeddings.
     *   **Streamlit-Agraph:** Para a renderização de grafos de conhecimento.
@@ -146,19 +147,6 @@ rag-visual-lab/
 └── ...
 ```
 
-## 🏗️ Arquitetura e Tecnologias
-
-A aplicação é construída como um aplicativo web monolítico renderizado no lado do servidor, utilizando uma stack focada em simplicidade e prototipagem rápida de IA.
-
-*   **Framework Principal:** **Streamlit** para a interface do usuário.
-*   **IA e LLMs:**
-    *   **Google Gemini:** Utilizado como o modelo de linguagem principal.
-    *   **CrewAI:** Framework de agentes para orquestrar o roteamento inteligente.
-*   **Vector Store:** **ChromaDB** para armazenamento e busca de embeddings.
-*   **Memória Persistente:** **Redis** (gerenciado via Docker) para o histórico de conversas.
-*   **Embeddings:** **Sentence-Transformers** (`paraphrase-multilingual-MiniLM-L12-v2`).
-*   **Visualização de Dados:** **Plotly** para o mapa de embeddings interativo.
-
 ## 🤝 Contribuindo
 
 Este projeto é uma ferramenta viva para a comunidade de mentorados. Contribuições são muito bem-vindas!
@@ -172,4 +160,5 @@ Este projeto é uma ferramenta viva para a comunidade de mentorados. Contribuiç
 ## ✨ Agradecimentos
 
 *   **Professor Sandeco** e toda a comunidade de mentorados.
+
 
