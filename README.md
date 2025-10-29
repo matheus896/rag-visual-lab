@@ -96,7 +96,7 @@ uv venv
 source .venv/bin/activate
 
 # Instale as dependências
-uv --sync --all-extras 
+uv sync --all-extras 
 ```
 
 **Inicie o Redis com Docker:**
@@ -172,3 +172,4 @@ Este projeto é uma ferramenta viva para a comunidade de mentorados. Contribuiç
 ## ✨ Agradecimentos
 
 *   **Professor Sandeco** e toda a comunidade de mentorados.
+
