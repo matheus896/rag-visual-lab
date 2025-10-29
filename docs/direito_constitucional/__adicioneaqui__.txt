@@ -1,1 +1,0 @@
-Pegue o conteúdo do exemplo fornecido pelo professor sandeco em "RAG Agentic" no livro e adicione nessa pasta.

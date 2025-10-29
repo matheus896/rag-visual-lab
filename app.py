@@ -1,3 +1,12 @@
+import sys
+import os
+
+# Adiciona o diretório raiz ao PYTHONPATH
+_current_dir = os.path.dirname(os.path.abspath(__file__))
+_root_dir = _current_dir
+if _root_dir not in sys.path:
+    sys.path.insert(0, _root_dir)
+
 import retriever
 import streamlit as st
 

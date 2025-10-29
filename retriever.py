@@ -3,6 +3,12 @@ from sentence_transformers import SentenceTransformer
 import sys
 import os
 
+# Adiciona o diretório raiz ao PYTHONPATH
+_current_dir = os.path.dirname(os.path.abspath(__file__))
+_root_dir = _current_dir
+if _root_dir not in sys.path:
+    sys.path.insert(0, _root_dir)
+
 # Obter o diretório do script atual
 script_dir = os.path.dirname(os.path.abspath(__file__))
 chroma_db_path = os.path.join(script_dir, "RAG_visual_lab", "chroma_db")

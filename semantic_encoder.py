@@ -1,4 +1,13 @@
-# aquivo semantic_encoder.py
+# arquivo semantic_encoder.py
+
+import sys
+import os
+
+# Adiciona o diretório raiz ao PYTHONPATH para permitir imports de qualquer lugar
+_current_dir = os.path.dirname(os.path.abspath(__file__))
+_root_dir = _current_dir
+if _root_dir not in sys.path:
+    sys.path.insert(0, _root_dir)
 
 from chunks import Chunks
 from read_files import ReadFiles
@@ -6,10 +15,6 @@ from sentence_transformers import SentenceTransformer
 import chromadb
 import uuid
 from typing import Any, Dict, List, Optional, cast
-"""import os
-
-script_dir = os.path.dirname(os.path.abspath(__file__))
-db_path = os.path.join(script_dir, "RAG_visual_lab", "chroma_db")"""
 
 
 class SemanticEncoder:
@@ -128,32 +133,51 @@ class SemanticEncoder:
 
 
 if __name__ == "__main__":
-    
-
-    from chunks import Chunks
-    from read_files import ReadFiles
-    from sentence_transformers import SentenceTransformer
-    import chromadb
-    import uuid
     import os
+    import traceback
 
-    # Obter o diretório do script atual
+    # Obter o diretório do script atual (garante que os caminhos relativos funcionem independente do cwd)
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    docs_path = os.path.join(script_dir, "docs", "synthetic_dataset_papers")
+    docs_base = os.path.join(script_dir, "docs")
     chroma_db_path = os.path.join(script_dir, "RAG_visual_lab", "chroma_db")
 
-    retriever = SemanticEncoder(
-        docs_dir=docs_path, #diretório dos documentos
-        chunk_size=2000, #tamanho do chunk
-        overlap_size=500, #tamanho da sobreposição
-        db_path=chroma_db_path, #caminho do banco ChromaDB
-        collection_name="synthetic_dataset_papers"
-    )
-    
-    # Construir base vetorial
-    stats = retriever.build(collection_name="synthetic_dataset_papers")
+    # Lista de datasets para processar (nome da coleção -> subpasta em docs)
+    datasets = [
+        {"name": "synthetic_dataset_papers", "subdir": "synthetic_dataset_papers"},
+        {"name": "direito_constitucional", "subdir": "direito_constitucional"},
+    ]
 
-    # Imprimir estatísticas
-    print(stats)
+    results = {}
+
+    for ds in datasets:
+        docs_path = os.path.join(docs_base, ds["subdir"])
+
+        if not os.path.exists(docs_path):
+            print(f"⚠️ Diretório de documentos não encontrado para '{ds['name']}': {docs_path}. Pulando.")
+            results[ds["name"]] = {"error": "docs_not_found", "path": docs_path}
+            continue
+
+        try:
+            print(f"\n🔁 Construindo coleção '{ds['name']}' a partir de: {docs_path}")
+            retriever = SemanticEncoder(
+                docs_dir=docs_path,
+                chunk_size=2000,
+                overlap_size=500,
+                db_path=chroma_db_path,
+                collection_name=ds["name"],
+            )
+
+            stats = retriever.build(collection_name=ds["name"])
+            results[ds["name"]] = stats
+
+        except Exception as e:
+            print(f"❌ Erro ao construir coleção '{ds['name']}': {e}")
+            traceback.print_exc()
+            results[ds["name"]] = {"error": str(e)}
+
+    # Resumo final
+    print("\n📌 Resumo das operações:")
+    for name, value in results.items():
+        print(f"- {name}: {value}")
 
 

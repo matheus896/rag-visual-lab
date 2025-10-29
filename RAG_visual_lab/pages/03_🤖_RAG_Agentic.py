@@ -27,8 +27,6 @@ import streamlit as st
 import os
 import sys
 from typing import Dict, Optional
-from io import StringIO
-from contextlib import redirect_stdout
 
 # Adiciona o diretório raiz ao path para imports
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -172,14 +170,13 @@ def build_agentic_rag_pipeline(query: str, api_key: str) -> tuple[str, Dict, str
     
     try:
         # ===== ETAPA 1: AGENTIC ROUTING =====
-        print(f"\\n🤖 [AGENTIC ROUTING] Analisando query para rotear dataset...")
+        print(f"\n🤖 [AGENTIC ROUTING] Analisando query para rotear dataset...")
         
-        # Captura stdout para obter os logs do agente
-        f = StringIO()
-        with redirect_stdout(f):
-            routing_result = st.session_state.rag_agentic_provider.route_query(query)
+        # Executar roteamento (os logs já vão para o terminal via TeeOutput no provider)
+        routing_result = st.session_state.rag_agentic_provider.route_query(query)
         
-        agent_reasoning = f.getvalue()
+        # Obter logs capturados do provider
+        agent_reasoning = st.session_state.rag_agentic_provider.last_logs
         
         if not routing_result:
             return "❌ Erro: O agente não conseguiu rotear a query.", {}, agent_reasoning
@@ -189,9 +186,11 @@ def build_agentic_rag_pipeline(query: str, api_key: str) -> tuple[str, Dict, str
         translated_query = routing_result.get("query", query)
         
         print(f"✅ [AGENTIC ROUTING] Dataset selecionado: {dataset_name}")
+        print(f"   └─ Locale: {locale}")
+        print(f"   └─ Query traduzida: {translated_query}")
         
         # ===== ETAPA 2: RETRIEVAL =====
-        print(f"\\n🔎 [RETRIEVAL] Buscando chunks em '{dataset_name}'...")
+        print(f"\n🔎 [RETRIEVAL] Buscando chunks em '{dataset_name}'...")
         
         retriever = RetrieverProvider(
             db_path=st.session_state.agentic_chroma_db_path,
@@ -213,7 +212,7 @@ def build_agentic_rag_pipeline(query: str, api_key: str) -> tuple[str, Dict, str
         print(f"✅ [RETRIEVAL] Encontrados {len(chunks)} chunks")
         
         # ===== ETAPA 3: AUGMENTATION =====
-        print(f"\\n📝 [AUGMENTATION] Enriquecendo prompt com chunks...")
+        print(f"\n📝 [AUGMENTATION] Enriquecendo prompt com chunks...")
         
         augmenter = AugmentationProvider(talk_id="agentic_session")
         prompt = augmenter.generate_prompt(query=translated_query, chunks=chunks)
@@ -221,7 +220,7 @@ def build_agentic_rag_pipeline(query: str, api_key: str) -> tuple[str, Dict, str
         print(f"✅ [AUGMENTATION] Prompt gerado ({len(prompt)} caracteres)")
         
         # ===== ETAPA 4: GENERATION =====
-        print(f"\\n🤖 [GENERATION] Gerando resposta com Gemini...")
+        print(f"\n🤖 [GENERATION] Gerando resposta com Gemini...")
         
         llm_config = GeminiConfig(api_key=api_key, temperature=0.7, max_tokens=2000)
         llm_function = get_gemini_llm_function(llm_config)

@@ -160,9 +160,47 @@ Exemplo de saída:
                 verbose=True
             )
             
-            # Executar crew e capturar output
+            # Executar crew e capturar output E logs detalhados
             print(f"🤖 [AGENTIC] Roteando query: '{query[:50]}...'")
-            result = crew.kickoff()
+            
+            # Capturar stdout/stderr para preservar logs visuais do CrewAI
+            captured_output = StringIO()
+            captured_error = StringIO()
+            
+            # Executar crew com captura de logs
+            import sys
+            old_stdout = sys.stdout
+            old_stderr = sys.stderr
+            
+            try:
+                # Usar Tee-like approach: escrever para stdout original E capturar
+                class TeeOutput:
+                    def __init__(self, *outputs):
+                        self.outputs = outputs
+                    
+                    def write(self, data):
+                        for output in self.outputs:
+                            output.write(data)
+                    
+                    def flush(self):
+                        for output in self.outputs:
+                            output.flush()
+                
+                # Redirecionar para capturar E manter no terminal
+                sys.stdout = TeeOutput(old_stdout, captured_output)
+                sys.stderr = TeeOutput(old_stderr, captured_error)
+                
+                result = crew.kickoff()
+                
+            finally:
+                # Restaurar stdout/stderr
+                sys.stdout = old_stdout
+                sys.stderr = old_stderr
+            
+            # Salvar logs capturados
+            self.last_logs = captured_output.getvalue()
+            if captured_error.getvalue():
+                self.last_logs += "\n[STDERR]\n" + captured_error.getvalue()
             
             # Converter resultado para string se necessário
             response_text = str(result)

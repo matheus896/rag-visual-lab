@@ -2,32 +2,32 @@
 # ==========================================
 
 # Framework Principal
-streamlit>=1.28.0
+streamlit>=1.50.0
+streamlit[pdf]
 
 # RAG Engine
-lightrag-hku>=0.0.1
+lightrag-hku==1.4.9.4
+crewai>=0.201.1
 
-# Visualizações
-plotly>=5.17.0
-streamlit-agraph>=0.0.45
+# Dados e Vetores
+chromadb>=1.1.0
+sentence-transformers>=5.1.1
 
-# UI Avançada (Material UI)
-streamlit-elements>=0.1.0
+# LLMs e APIs
+openai>=1.109.0
+google-genai>=1.38.0
+markitdown[all]>=0.1.3
+
+# Integrações e Utilidades
+python-dotenv>=1.1.1
+redis>=6.4.0
 
 # Processamento de Texto e Documentos
-pypdf>=3.17.0
-python-docx>=1.0.0
-python-pptx>=0.6.23
-pandas>=2.0.0
-openpyxl>=3.1.0
+PyPDF2==3.0.1
+pypdf==6.1.3
+python-docx==1.2.0
 
-# LLM e Embeddings
-# IA e LLMs
-openai>=1.0.0
-google-genai>=1.0.0  # Gemini API
-
-tiktoken>=0.5.0
-
-# Utilidades
-numpy>=1.24.0
-scikit-learn>=1.3.0  # Para PCA e redução de dimensionalidade
+# Visualizações
+plotly==6.3.1
+streamlit-agraph>=0.0.45
+streamlit-elements==0.1.*
